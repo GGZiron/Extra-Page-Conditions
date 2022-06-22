@@ -1,5 +1,7 @@
 Plugin name: GGZiron's Extra Page Conditions
+
 Engine: RPG Maker MZ
+
 Plugin Version: 1.0.0
 
 Terms: Free to use, as long you credit me as GGZiron.
