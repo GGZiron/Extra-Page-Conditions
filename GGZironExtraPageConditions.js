@@ -10,7 +10,30 @@
  * -------------------------------------------------------------------------
  *                    GGZiron's Extra Page Conditions
  * -------------------------------------------------------------------------
+ * -------------------------------------------------------------------------
+ * Features:
+ * -------------------------------------------------------------------------
+ * - Allows you to set additional options via plugin command: switch, 
+ *   self-switch, self-switch of other event, variable, actor presence, item 
+ *   possession, script call* with return statement. Game variables 
+ *   evaluation is not just more or equal than, as default, but also less, 
+ *   equal or less, more, equal, not equal. 
+ *   *The script call can be tricky. It uses values that do not refresh 
+ *   pages, it will not work correctly. More about it in the help file.
  *
+ * - Secondary plugin command with negated options: for switches, 
+ *   self-switches, item possession, actor presence. It requires them to be 
+ *   OFF. Useful for single page events, without needing to add secondary 
+ *   blank page with Self-Switch On, or other requirements. Can be counter 
+ *   intuitive, so carefull.
+ *
+ * - Third plugin command, that locks given page. This page will never
+ *   activate. I need it for myself, so I figured someone else might need 
+ *   it too. 
+ *
+ * - Note tag, set by you. Only event that have it will be evaluated by 
+ *   my plugin. If you set empty string for note tag, all would be
+ *   evaluated. Note tag is useful if you want better performance. 
  * -------------------------------------------------------------------------
  * Terms:
  * -------------------------------------------------------------------------
@@ -56,8 +79,6 @@
  * Alternatively, every time you change value that might need 
  * page refreshing, you can request page refresh with this script 
  * call: $gameMap.requestRefresh();
- * But it’s highly not recommended. Can kill performance, if
- * used incorrectly.
  *
  * There is one additional plugin command: "Lock Page",
  * that locks the page. A locked page would never activate.
@@ -257,6 +278,9 @@
  * @option Less Or Equal
  * @value <=
  * @default ===
+ * @option Not Equal
+ * @value !==
+ * @default >
  
  * @param value
  * @text Compared Value
@@ -289,7 +313,9 @@ Game_Event.prototype.meetsConditions = function(page) {
     return GGZiron.ExtraPageConditions.methods.evaluateConditions.call(this, page);
 };
 
-
+// ===============================================================================================================
+//                                                 New methods
+// ===============================================================================================================
 GGZiron.ExtraPageConditions.methods.evaluateConditions = function(page){
 	GGZiron.ExtraPageConditions.methods.assignPageConditions.call(this, page);
 	let conditions = page._ggzExtraConditions;
@@ -309,16 +335,7 @@ GGZiron.ExtraPageConditions.methods.evaluateConditions = function(page){
 
 GGZiron.ExtraPageConditions.methods.assignPageConditions = function(page){
 	if (page._ggzExtraConditions) return;
-	let mapID;
-	try{
-		mapID = this.mapId(); 
-		//most probably overkill, but in case plugin add such method to event
-		//will take the map data from there. Idea is, if project is set to
-		//suport many active maps at once, to be easier to adapt.
-		//map id used for self_switches.
-	}catch(oErMsg){
-		mapID = $gameMap.mapId();
-	};
+	let mapID = this._mapId; //used to generate self-switch key.
 	page._ggzExtraConditions = new GGZiron_ExtraPageConditions(page, mapID, this.eventId());
 };
 
@@ -378,7 +395,7 @@ GGZiron.ExtraPageConditions.methods.evaluateActors = function(actors, needPresen
 
 GGZiron.ExtraPageConditions.methods.evaluateVariables = function(conditions){
 	let variables = conditions.variables;
-	for (variableData of variables){
+	for (let variableData of variables){
 		let varID = variableData[0];
 		if (varID <= 0) continue;
 		let varValue = $gameVariables.value(varID);
@@ -386,11 +403,12 @@ GGZiron.ExtraPageConditions.methods.evaluateVariables = function(conditions){
 		let rawValue = variableData[2];
 		let result;
 		switch(operator){
-			case '<'  : result = varValue < rawValue;   break;
-			case '<=' : result = varValue <= rawValue;  break;
-			case '===': result = varValue === rawValue; break;
-            case '>=' : result = varValue >= rawValue;  break;
-			case '>'  : result = varValue > rawValue;   break;
+			case '<'   : result = varValue < rawValue;   break;
+			case '<='  : result = varValue <= rawValue;  break;
+			case '===' : result = varValue === rawValue; break;
+            case '>='  : result = varValue >= rawValue;  break;
+			case '>'   : result = varValue > rawValue;   break;
+			case '!==' : result = varValue !== rawValue; break;
 			
 			default: 
 			    console.warn('GGZiron Extra Page Condition -> Provided incorect operator for variable condition. Ignoring entry.');
