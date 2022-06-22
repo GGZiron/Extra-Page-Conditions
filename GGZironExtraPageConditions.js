@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 /*:
  * @plugindesc Extra Page Conditions Version 1.0.0
- * @url
+ * @url 
  * @target MZ
  * @author GGZiron
  
