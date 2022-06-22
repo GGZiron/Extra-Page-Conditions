@@ -18,7 +18,7 @@
  *   possession, script call* with return statement. Game variables 
  *   evaluation is not just more or equal than, as default, but also less, 
  *   equal or less, more, equal, not equal. 
- *   *The script call can be tricky. It uses values that do not refresh 
+ *   *The script call can be tricky. If uses values that do not refresh 
  *   pages, it will not work correctly. More about it in the help file.
  *
  * - Secondary plugin command with negated options: for switches, 
