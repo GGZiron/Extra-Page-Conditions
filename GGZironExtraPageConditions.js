@@ -97,7 +97,7 @@
  * conditions used there would be ignored.
  * The tag will be trimmed (all empty space before first character, and
  * after last character will be removed), and text will not be case 
- * sensitive. That means <Extra_Page> and <extra page> would work
+ * sensitive. That means <Extra_Page> and <extra_page> would work
  * the same.
  * -------------------------------------------------------------------------
  * Shortcomings:
